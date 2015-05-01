@@ -1170,23 +1170,6 @@ Check doc. of &#8220;to_csv&#8221; for complete list of options</p>
 <em class="property">class </em><tt class="descclassname">pyseidon.</tt><tt class="descname">Station</tt><big>(</big><em>filename</em>, <em>elements=slice(None</em>, <em>None</em>, <em>None)</em>, <em>debug=False</em><big>)</big><a class="headerlink" href="#pyseidon.Station" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>A class/structure for Station data.
-Functionality structured as follows:</p>
-<blockquote>
-<div><blockquote>
-<div><blockquote>
-<div>_Data. = raw netcdf file data</div></blockquote>
-<p><a href="#id23"><span class="problematic" id="id24">|</span></a>_Variables. = fvcom station variables and quantities
-<a href="#id25"><span class="problematic" id="id26">|</span></a>_Grid. = fvcom station grid data
-<a href="#id27"><span class="problematic" id="id28">|</span></a>_History = Quality Control metadata</p>
-</div></blockquote>
-<dl class="docutils">
-<dt>testFvcom._|_Utils2D. = set of useful functions for 2D and 3D station</dt>
-<dd><a href="#id29"><span class="problematic" id="id30">|</span></a>_Utils3D. = set of useful functions for 3D station
-<a href="#id31"><span class="problematic" id="id32">|</span></a>_Plots. = plotting functions
-<a href="#id33"><span class="problematic" id="id34">|</span></a>_Harmonic_analysis = harmonic analysis based UTide package
-<a href="#id35"><span class="problematic" id="id36">|</span></a>_Harmonic_reconstruction = harmonic reconstruction based UTide package</dd>
-</dl>
-</div></blockquote>
 </div></blockquote>
 <blockquote>
 <div><ul>
@@ -1794,22 +1777,6 @@ Check doc. of &#8220;to_csv&#8221; for complete list of options</p>
 <em class="property">class </em><tt class="descclassname">pyseidon.</tt><tt class="descname">ADCP</tt><big>(</big><em>filename</em>, <em>debug=False</em><big>)</big><a class="headerlink" href="#pyseidon.ADCP" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>A class/structure for ADCP data.
-Functionality structured as follows:</p>
-<blockquote>
-<div><blockquote>
-<div><blockquote>
-<div>_Data. = raw matlab file data</div></blockquote>
-<p><a href="#id48"><span class="problematic" id="id49">|</span></a>_Variables. = useable adcp variables and quantities
-<a href="#id50"><span class="problematic" id="id51">|</span></a>_History = Quality Control metadata</p>
-</div></blockquote>
-<dl class="docutils">
-<dt>testAdcp._|_Utils. = set of useful functions</dt>
-<dd><a href="#id52"><span class="problematic" id="id53">|</span></a>_Plots. = plotting functions
-<a href="#id54"><span class="problematic" id="id55">|</span></a>_method_1
-| ...      = methods and analysis techniques intrinsic to ADCPs
-<a href="#id56"><span class="problematic" id="id57">|</span></a>_method_n</dd>
-</dl>
-</div></blockquote>
 </div></blockquote>
 <blockquote>
 <div>Only takes a file name as input, ex: testAdcp=ADCP(&#8216;./path_to_matlab_file/filename&#8217;)</div></blockquote>
@@ -1841,19 +1808,6 @@ as formatted through &#8220;EnsembleData_FlowFile&#8221; matlab script at the mo
 <em class="property">class </em><tt class="descclassname">pyseidon.</tt><tt class="descname">TideGauge</tt><big>(</big><em>filename</em>, <em>debug=False</em><big>)</big><a class="headerlink" href="#pyseidon.TideGauge" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>A class/structure for tide gauge data.
-Functionality structured as follows:</p>
-<blockquote>
-<div><blockquote>
-<div><blockquote>
-<div>_Data. = raw matlab file data</div></blockquote>
-<p><a href="#id59"><span class="problematic" id="id60">|</span></a>_Variables. = useable tide gauge variables and quantities</p>
-</div></blockquote>
-<dl class="docutils">
-<dt>TideGauge._|_History = Quality Control metadata</dt>
-<dd><a href="#id61"><span class="problematic" id="id62">|</span></a>_Utils. = set of useful functions
-<a href="#id63"><span class="problematic" id="id64">|</span></a>_Plots. = plotting functions</dd>
-</dl>
-</div></blockquote>
 </div></blockquote>
 <blockquote>
 <div>Only takes a file name as input, ex: testTG=TideGauge(&#8216;./path_to_matlab_file/filename&#8217;)</div></blockquote>
@@ -2002,22 +1956,6 @@ Check doc. of &#8220;to_csv&#8221; for complete list of options</p>
 <em class="property">class </em><tt class="descclassname">pyseidon.</tt><tt class="descname">Drifter</tt><big>(</big><em>filename</em>, <em>debug=False</em><big>)</big><a class="headerlink" href="#pyseidon.Drifter" title="Permalink to this definition">¶</a></dt>
 <dd><blockquote>
 <div><p>A class/structure for Drifter data.
-Functionality structured as follows:</p>
-<blockquote>
-<div><blockquote>
-<div><blockquote>
-<div>_Data. = raw matlab file data</div></blockquote>
-<p><a href="#id67"><span class="problematic" id="id68">|</span></a>_Variables. = useable drifter variables and quantities
-<a href="#id69"><span class="problematic" id="id70">|</span></a>_History = Quality Control metadata</p>
-</div></blockquote>
-<dl class="docutils">
-<dt>testAdcp._|_Utils. = set of useful functions</dt>
-<dd><a href="#id71"><span class="problematic" id="id72">|</span></a>_Plots. = plotting functions
-<a href="#id73"><span class="problematic" id="id74">|</span></a>_method_1
-| ...      = methods and analysis techniques intrinsic to drifters
-<a href="#id75"><span class="problematic" id="id76">|</span></a>_method_n</dd>
-</dl>
-</div></blockquote>
 </div></blockquote>
 <blockquote>
 <div>Only takes a file name as input, ex: testDrifter=Drifter(&#8216;./path_to_matlab_file/filename&#8217;)</div></blockquote>
