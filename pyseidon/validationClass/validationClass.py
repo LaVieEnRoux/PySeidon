@@ -22,12 +22,17 @@ import scipy.io as sio
 #Local import
 from compareData import *
 from valTable import valTable
+from smooth import smooth
 from variablesValidation import _load_validation
 from interpolation_utils import *
 from stationClass import Station
 from adcpClass import ADCP
 from fvcomClass import FVCOM
 from tidegaugeClass import TideGauge
+
+# define water densite
+rho = 10.25
+
 
 class Validation:
     """
@@ -361,6 +366,39 @@ class Validation:
         else:
             print "-No matching harmonic coefficients for velocity-"
 
+    def powerRMSE(self, debug=False):
+        '''
+        Calculates the RMSE quickly without having to calculate everything
+        else.
+        '''
+        # grab important variables
+        mod_u = self.Variables.struct['mod_timeseries']['ua']
+        mod_v = self.Variables.struct['mod_timeseries']['va']
+        mod_spd = np.sqrt(mod_u**2 + mod_v**2)
+        mod_pow = 0.5 * rho**3 * mod_spd**3
+
+        obs_u = self.Variables.struct['obs_timeseries']['ua']
+        obs_v = self.Variables.struct['obs_timeseries']['va']
+        obs_spd = np.sqrt(obs_u**2 + obs_v**2)
+        obs_pow = 0.5 * rho**3 * obs_spd**3
+
+        # change times to datetime times
+        obs_time = self.Variables.struct['obs_time']
+        mod_time = self.Variables.struct['mod_time']
+        obs_dt, mod_dt = [], []
+        for i in np.arange(obs_time.size):
+            obs_dt.append(dn2dt(obs_time[i]))
+        for i in np.arange(mod_time.size):
+            mod_dt.append(dn2dt(mod_time[i]))
+
+        # perform interpolation and grab RMSE
+        (mod_pw_int, obs_pw_int, step_pw_int, start_pw_int) = \
+            smooth(mod_pow, mod_dt, obs_pow, obs_dt,
+                   debug=debug)
+        stats = TidalStats(mod_pw_int, obs_pw_int, step_pw_int,
+                           start_pw_int, type='power', debug=debug)
+        RMSE = stats.getRMSE()
+        return RMSE
 
     def Save_as(self, filename, fileformat='pickle', debug=False):
         """
