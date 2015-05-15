@@ -5,8 +5,6 @@ import numpy as np
 import pandas as pd
 import sys
 
-# ALTERNATE VERSION FOR ANDY
-
 def valTable(struct, filename, vars, debug=False, debug_plot=False):
     '''
     Takes validation data from the struct and saves it into a .csv file .
@@ -38,7 +36,7 @@ def valTable(struct, filename, vars, debug=False, debug_plot=False):
     table.to_csv(out_file)
     return table
 
-def siteStats(site, variable, type, name, RMSE, CF, SD, POF, NOF, MDPO, MDNO, 
+def siteStats(site, variable, type, name, RMSE, CF, SD, POF, NOF, MDPO, MDNO,
 	      skill, r2, phase, debug=False, debug_plot=False):
     '''
     Takes in the run (an array of dictionaries) and the type of the run (a
@@ -60,8 +58,8 @@ def siteStats(site, variable, type, name, RMSE, CF, SD, POF, NOF, MDPO, MDNO,
     else:
         print "---The variable tg is missing---"
         sys.exit()
-   
-    # add the statistics to the list, round to 2 decimal places 
+
+    # add the statistics to the list, round to 2 decimal places
     RMSE.append(round(stats['RMSE'], 2))
     CF.append(round(stats['CF'], 2))
     SD.append(round(stats['SD'], 2))

@@ -41,7 +41,7 @@ def smooth(data_1, dt_1, data_2, dt_2, debug=False, debug_plot=False):
         end_buf = start + step_sec * (i + 1)
 
 	buf_1 = np.where((times_1 >= start_buf) & (times_1 < end_buf))[0]
-	buf_2 = np.where((times_2 >= start_buf) & (times_2 < end_buf))[0]	
+	buf_2 = np.where((times_2 >= start_buf) & (times_2 < end_buf))[0]
 
 	data_buf_1 = data_1[buf_1]
 	data_buf_2 = data_2[buf_2]

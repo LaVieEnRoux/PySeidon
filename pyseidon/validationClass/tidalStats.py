@@ -10,6 +10,10 @@ import time
 import seaborn
 import pandas as pd
 
+# define water density
+rho = 10.25
+
+
 class TidalStats:
     '''
     An object representing a set of statistics on tidal heights used
@@ -37,7 +41,7 @@ class TidalStats:
         self.observed = self.observed.astype(np.float64)
 
         #TR: fix for interpolation pb when 0 index or -1 index array values = nan
-	if debug: print "...trim nans at start and end of data.."
+        if debug: print "...trim nans at start and end of data.."
         start_index, end_index = 0, -1
         while (np.isnan(self.observed[start_index]) or np.isnan(self.model[start_index])):
             start_index += 1
@@ -46,18 +50,18 @@ class TidalStats:
 
         #Correction for bound index call
         if end_index == -1:
-             end_index = None
+            end_index = None
         else:
-             end_index += 1
+            end_index += 1
         if debug: print "Start index: ", start_index
         if debug: print "End index: ", end_index
 
         m = self.model[start_index:end_index]
         o = self.observed[start_index:end_index]
 
-	setattr(self, 'model', m)
-	setattr(self, 'observed', o)
-        
+        setattr(self, 'model', m)
+        setattr(self, 'observed', o)
+
         # set up array of datetimes corresponding to the data (and timestamps)
         self.times = start_time + np.arange(self.model.size) * time_step
         self.step = time_step
@@ -65,33 +69,35 @@ class TidalStats:
         for j, jj in enumerate(self.times):
             timestamps[j] = time.mktime(jj.timetuple())
 
-	if debug: print "...uses linear interpolation to eliminate any NaNs in the data..."
-	if (True in np.isnan(self.observed)):
-	    obs_nonan = self.observed[np.where(~np.isnan(self.observed))[0]]
-	    time_nonan = timestamps[np.where(~np.isnan(self.observed))[0]]
-	    func = interp1d(time_nonan, obs_nonan)
-	    self.observed = func(timestamps)
-	if (True in np.isnan(self.model)):
-	    mod_nonan = self.model[np.where(~np.isnan(self.model))[0]]
-	    time_nonan = timestamps[np.where(~np.isnan(self.model))[0]]
-	    func = interp1d(time_nonan, mod_nonan)
-	    self.model = func(timestamps)
+        if debug: print "...uses linear interpolation to eliminate any NaNs in the data..."
+        if (True in np.isnan(self.observed)):
+            obs_nonan = self.observed[np.where(~np.isnan(self.observed))[0]]
+            time_nonan = timestamps[np.where(~np.isnan(self.observed))[0]]
+            func = interp1d(time_nonan, obs_nonan)
+            self.observed = func(timestamps)
+        if (True in np.isnan(self.model)):
+            mod_nonan = self.model[np.where(~np.isnan(self.model))[0]]
+            time_nonan = timestamps[np.where(~np.isnan(self.model))[0]]
+            func = interp1d(time_nonan, mod_nonan)
+            self.model = func(timestamps)
 
-	self.error = self.observed - self.model
-	self.length = self.error.size
-	self.type = type
+        self.error = self.observed - self.model
+        self.length = self.error.size
+        self.type = type
 
         if debug: print "...establish limits as defined by NOAA standard..."
         if (type == 'speed' or type == 'velocity'):
             self.ERROR_BOUND = 0.26
         elif (type == 'elevation'):
-    	    self.ERROR_BOUND = 0.15
+            self.ERROR_BOUND = 0.15
         elif (type == 'direction' or type == 'ebb' or type == 'flow'):
-    	    self.ERROR_BOUND = 22.5
-	elif (type == 'u velocity' or type == 'v velocity'):
-	    self.ERROR_BOUND = 0.35
+            self.ERROR_BOUND = 22.5
+        elif (type == 'u velocity' or type == 'v velocity'):
+            self.ERROR_BOUND = 0.35
+        elif (type == 'power'):
+            self.ERROR_BOUND = 0.5 * rho**3 * 0.26**3
         else:
-    	    self.ERROR_BOUND = 0.5
+            self.ERROR_BOUND = 0.5
 
         if debug: print "...TidalStats initialisation done."
 
@@ -222,7 +228,7 @@ class TidalStats:
 	errors = []
 	phases = np.arange(-num_steps, num_steps)
 	for i in phases:
-	    
+
 	    # create shifted data
 	    if (i < 0):
 		# left shift
@@ -239,12 +245,12 @@ class TidalStats:
 
 	    start = self.times[abs(i)]
 	    step = self.times[1] - self.times[0]
-	
+
 	    # create TidalStats class for shifted data and get the RMSE
 	    stats = TidalStats(shift_mod, shift_obs, step, start, type='Phase')
 	    rms_error = stats.getRMSE()
 	    errors.append(rms_error)
-	    
+
 	if debug or self._debug: print "...find the minimum rmse, and thus the minimum phase..."
 	min_index = errors.index(min(errors))
 	best_phase = phases[min_index]
@@ -480,7 +486,7 @@ class TidalStats:
         g = seaborn.jointplot("model", "observed", data=df, kind="reg",
                               xlim=(df.model.min(), df.model.max()),
                               ylim=(df.observed.min(), df.observed.max()),
-                              color=color, size=7)   
+                              color=color, size=7)
         plt.suptitle('Modeled vs. Observed {}: Linear Fit'.format(self.type))
 
 	if save:
@@ -528,7 +534,7 @@ class TidalStats:
 	if save:
 	    plt.savefig(out_f)
 	else:
-	    plt.show()	
+	    plt.show()
 
     def save_data(self):
             df = pd.DataFrame(data={'time': self.times.flatten(),
