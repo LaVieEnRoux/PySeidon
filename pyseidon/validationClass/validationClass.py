@@ -18,6 +18,7 @@ import sys
 import os
 from utide import ut_solv
 import scipy.io as sio
+from os import listdir
 
 #Local import
 from compareData import *
@@ -30,8 +31,14 @@ from adcpClass import ADCP
 from fvcomClass import FVCOM
 from tidegaugeClass import TideGauge
 
-# define water densite
+# define water density
 rho = 10.25
+
+# ADCP directories on the cluster
+adcp_dirs = ['/EcoII/acadia_uni/workspace/observed/DG/ADCP/',
+             '/EcoII/acadia_uni/workspace/observed/GP/ADCP/',
+             '/EcoII/acadia_uni/workspace/observed/PP/ADCP/',
+             '/EcoII/acadia_uni/workspace/observed/BoF/ADCP/']
 
 
 class Validation:
@@ -49,16 +56,68 @@ class Validation:
     ------
       - observed = any PySeidon measurement object (i.e. ADCP, TideGauge, Drifter,...)
       - simulated = any PySeidon simulation object (i.e. FVCOM or Station)
+      - find_adcp (optional) = if True, it will ignore the observed input and
+                               will search for the ADCP file that lines up the
+                               most with the given input model data. This
+                               ADCP will be used as the observed data.
     """
-    def __init__(self, observed, simulated, debug=False, debug_plot=False):
+    def __init__(self, observed, simulated, debug=False, debug_plot=False,
+                 find_adcp=False):
         self._debug = debug
         self._debug_plot = debug_plot
         if debug: print '-Debug mode on-'
         if debug: print 'Loading...'
-        #Metadata
-        self.History = ['Created from ' + observed._origin_file +\
+
+        # search predefined directoried for lined-up ADCP files if specified
+        if find_adcp:
+            if debug: print 'Finding relevant ADCP file...'
+            mod_time = model.Variables.matlabTime
+            mod_start, mod_end = mod_time[0], mod_time[-1]
+            mod_range = mod_end - mod_start
+
+            # iterate through ADCP directories
+            adcp_files = []
+            for adcp_dir in adcp_dirs:
+                files = [join(adcp_dir, f) for f in listdir(adcp_dir)
+                         if isfile(join(adcp_dir, f))]
+                adcp_files.extend(files)
+            adcp_lineup = np.empty(len(adcp_files))
+
+            # check each file, see how much it lines up
+            for i, adcp in enumerate(adcp_files):
+                if 'raw' in adcp.lower() or 'station' in adcp.lower():
+                    adcp_lineup[i] = 0
+                    continue
+
+                try:
+                    adcp = sio.loadmat(adcp)
+                    times = adcp['time'][0][0][0][0]
+                except:
+                    adcp = h5py.File(adcp)
+                    times = np.rot90(adcp['time']['mtime'][:])[0]
+                obs_start, obs_end = times[0], times[-1]
+
+                # find lineup amount
+                if obs_start < mod_end or obs_end > mod_start:
+                    val_start = max(obs_start, mod_start)
+                    val_end = min(obs_end, mod_end)
+                    lineup = val_end - val_start
+                    adcp_lineup[i] = lineup
+                else:
+                    adcp_lineup[i] = 0
+
+            # find maximally lined up adcp file, add metadata
+            max_ind = np.argmax(adcp_lineup)
+            max_adcp = adcp_files[max_ind]
+            self.History.append('ADCP matches %5.2f percent of the model' %
+                                (adcp_lineup[max_ind] / mod_range) * 100.)
+            observed = ADCP(max_adcp)
+
+        # Metadata
+        self.History = ['Created from ' + observed._origin_file +
                         ' and ' + simulated._origin_file]
-        self.Variables = _load_validation(observed, simulated, debug=self._debug)
+        self.Variables = _load_validation(observed, simulated,
+                                          debug=self._debug)
 
     def validate_data(self, filename=[], depth=[], plot=False, save_csv=False,
                       debug=False, debug_plot=False):
@@ -138,11 +197,11 @@ class Validation:
             print "-This type of measurements is not supported yet-"
             sys.exit()
 
-        #Make csv file
+        # Make csv file
         self.Benchmarks = valTable(self.Variables.struct, filename,  vars,
                                    debug=debug, debug_plot=debug_plot)
 
-        #Display csv
+        # Display csv
         #csvName = filename + '_val.csv'
         #csv_con = open(csvName, 'r')
         #csv_cont = list(csv.reader(csv_con, delimiter=','))
@@ -261,25 +320,25 @@ class Validation:
         matchVelCoef = []
         matchVelCoefInd = []
         try:
-	    for i1, key1 in enumerate(self.Variables.sim.velCoef['name']):
-	        for i2, key2 in enumerate(self.Variables.obs.velCoef['name']):
-	            if key1 == key2:
-		        matchVelCoefInd.append((i1,i2))
-		        matchVelCoef.append(key1)
-	    matchVelCoefInd=np.array(matchVelCoefInd)
-	    noMatchVelCoef = np.delete(self.Variables.sim.velCoef['name'],
-				       matchVelCoefInd[:,0])
-	    np.hstack((noMatchVelCoef,np.delete(self.Variables.obs.velCoef['name'],
-                       matchVelCoefInd[:,1]) ))
+            for i1, key1 in enumerate(self.Variables.sim.velCoef['name']):
+                for i2, key2 in enumerate(self.Variables.obs.velCoef['name']):
+                    if key1 == key2:
+                        matchVelCoefInd.append((i1, i2))
+                        matchVelCoef.append(key1)
+            matchVelCoefInd = np.array(matchVelCoefInd)
+            noMatchVelCoef = np.delete(self.Variables.sim.velCoef['name'],
+                                       matchVelCoefInd[:, 0])
+            np.hstack((noMatchVelCoef,
+                       np.delete(self.Variables.obs.velCoef['name'],
+                                 matchVelCoefInd[:, 1])))
         except AttributeError:
             pass
 
-
-        #Compare obs. vs. sim. elevation harmo coef
+        # Compare obs. vs. sim. elevation harmo coef
         data = {}
         columns = ['A', 'g', 'A_ci', 'g_ci']
 
-        #Store harmonics in csv files
+        # Store harmonics in csv files
         if save_csv:
             #observed elevation coefs
             for key in columns:
