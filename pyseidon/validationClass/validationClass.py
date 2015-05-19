@@ -87,11 +87,12 @@ class Validation:
 
             # check each file, see how much it lines up
             for i, adcp in enumerate(adcp_files):
-                if 'raw' in adcp.lower() or 'station' in adcp.lower():
+                if 'raw' in adcp.lower() or 'station' in adcp.lower() \
+                        or '.mat' not in adcp:
                     adcp_lineup[i] = 0
                     continue
 
-                print 'File: ' + adcp
+                # print 'File: ' + adcp
 
                 try:
                     adcp = sio.loadmat(adcp)
