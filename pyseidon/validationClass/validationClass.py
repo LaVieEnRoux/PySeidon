@@ -92,8 +92,6 @@ class Validation:
                     adcp_lineup[i] = 0
                     continue
 
-                # print 'File: ' + adcp
-
                 try:
                     adcp = sio.loadmat(adcp)
                     times = adcp['time'][0][0][0][0]
@@ -114,6 +112,9 @@ class Validation:
             # find maximally lined up adcp file, add metadata
             max_ind = np.argmax(adcp_lineup)
             max_adcp = adcp_files[max_ind]
+
+            if debug: print 'Detected ADCP: ' + max_adcp
+
             self.History = ['ADCP matches %5.2f percent of the model' %
                             ((adcp_lineup[max_ind] / mod_range) * 100.)]
             observed = ADCP(max_adcp)
