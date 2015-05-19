@@ -71,7 +71,7 @@ class Validation:
         # search predefined directoried for lined-up ADCP files if specified
         if find_adcp:
             if debug: print 'Finding relevant ADCP file...'
-            mod_time = model.Variables.matlabTime
+            mod_time = simulated.Variables.matlabTime
             mod_start, mod_end = mod_time[0], mod_time[-1]
             mod_range = mod_end - mod_start
 
