@@ -94,8 +94,8 @@ class Validation:
                 try:
                     adcp = sio.loadmat(adcp)
                     times = adcp['time'][0][0][0][0]
-                except:
-                    adcp = h5py.File(adcp)
+                except NotImplementedError:
+                    adcp = h5py.File(adcp, 'r')
                     times = np.rot90(adcp['time']['mtime'][:])[0]
                 obs_start, obs_end = times[0], times[-1]
 
