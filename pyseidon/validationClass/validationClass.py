@@ -87,8 +87,9 @@ class Validation:
 
             # check each file, see how much it lines up
             for i, adcp in enumerate(adcp_files):
+                # ignore non-processed/non-ADCP files
                 if 'raw' in adcp.lower() or 'station' in adcp.lower() \
-                        or '.mat' not in adcp:
+                        or '.mat' not in adcp or 'stn' in adcp.lower():
                     adcp_lineup[i] = 0
                     continue
 
