@@ -19,6 +19,7 @@ import os
 from utide import ut_solv
 import scipy.io as sio
 from os import listdir
+from os.path import isfile
 
 #Local import
 from compareData import *
