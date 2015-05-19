@@ -91,6 +91,8 @@ class Validation:
                     adcp_lineup[i] = 0
                     continue
 
+                print 'File: ' + adcp
+
                 try:
                     adcp = sio.loadmat(adcp)
                     times = adcp['time'][0][0][0][0]
