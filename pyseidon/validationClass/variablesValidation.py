@@ -28,7 +28,7 @@ class _load_validation:
 
                            _obs. = measurement/observational variables
     Validation.Variables._|_sim. = simulated variables
-                          |_struct. = dictionnary structure for validation purposes 
+                          |_struct. = dictionnary structure for validation purposes
     """
     def __init__(self, observed, simulated, debug=False, debug_plot=False):
         if debug: print "..variables.."
@@ -43,7 +43,7 @@ class _load_validation:
         simMin = self.sim.matlabTime.min()
         absMin = max(obsMin, simMin)
         absMax = min(obsMax, simMax)
-        A = set(np.where(self.sim.matlabTime[:] >= absMin)[0].tolist()) 
+        A = set(np.where(self.sim.matlabTime[:] >= absMin)[0].tolist())
         B = set(np.where(self.sim.matlabTime[:] <= absMax)[0].tolist())
         C = list(A.intersection(B))
         #-Correction by J.Culina 2014-
@@ -51,14 +51,14 @@ class _load_validation:
         #-end-
         self._C = C
 
-        a = set(np.where(self.obs.matlabTime[:] >= absMin)[0].tolist()) 
+        a = set(np.where(self.obs.matlabTime[:] >= absMin)[0].tolist())
         b = set(np.where(self.obs.matlabTime[:] <= absMax)[0].tolist())
         c = list(a.intersection(b))
         #-Correction by J.Culina 2014-
         c = sorted(c)
         #-end-
         self._c = c
-        
+
         if len(C) == 0:
            print "---Time between simulation and measurement does not match up---"
            sys.exit()
@@ -114,10 +114,10 @@ class _load_validation:
                      'u':u[C,:],
                      'v':v[C,:],
                      'siglay':sig[:]}
-             
 
-        #Check what kind of observed data it is
-        if observed.__module__=='pyseidon.adcpClass.adcpClass':
+        # Check what kind of observed data it is
+        if observed.__module__ == 'pyseidon.adcpClass.adcpClass' or \
+                observed.__module__ == 'adcpClass':
             self._obstype = 'adcp'
             obstype='ADCP'
             obs_mod={'ua':self.obs.ua[c],
