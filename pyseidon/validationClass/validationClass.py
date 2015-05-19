@@ -114,13 +114,13 @@ class Validation:
             # find maximally lined up adcp file, add metadata
             max_ind = np.argmax(adcp_lineup)
             max_adcp = adcp_files[max_ind]
-            self.History.append('ADCP matches %5.2f percent of the model' %
-                                (adcp_lineup[max_ind] / mod_range) * 100.)
+            self.History = ['ADCP matches %5.2f percent of the model' %
+                            ((adcp_lineup[max_ind] / mod_range) * 100.)]
             observed = ADCP(max_adcp)
 
         # Metadata
-        self.History = ['Created from ' + observed._origin_file +
-                        ' and ' + simulated._origin_file]
+        self.History.append('Created from ' + observed._origin_file +
+                        ' and ' + simulated._origin_file)
         self.Variables = _load_validation(observed, simulated,
                                           debug=self._debug)
 
