@@ -81,7 +81,7 @@ class TidalStats:
             func = interp1d(time_nonan, mod_nonan)
             self.model = func(timestamps)
 
-        self.error = self.observed - self.model
+        self.error = self.model - self.observed
         self.length = self.error.size
         self.type = type
 
@@ -114,6 +114,37 @@ class TidalStats:
         '''
         if debug or self._debug: print "...getSD..."
         return np.sqrt(np.mean(abs(self.error - np.mean(self.error)**2)))
+
+    def getBias(self, debug=False):
+        '''
+        Returns the bias of the model, a measure of over/under-estimation.
+        '''
+        if debug or self._debug: print "...getBias..."
+        return np.mean(self.error)
+
+    def getSI(self, debug=False):
+        '''
+        Returns the scatter index of the model, a weighted measure of data
+        scattering.
+        '''
+        if debug or self._debug: print "...getSI..."
+        return self.getRMSE() / np.mean(self.observed)
+
+    def getNRMSE(self, debug=False):
+        '''
+        Returns the normalized root mean squared error between the model and
+        observed data.
+        '''
+        if debug or self._debug: print "...getNRMSE..."
+        return 100. * self.getRMSE() / (max(self.observed) - min(self.observed))
+
+    def getPBIAS(self, debug=False):
+        '''
+        Returns the percent bias between the model and the observed data.
+        '''
+        if debug or self._debug: print "...getPBIAS..."
+        norm_error = self.error / self.observed
+        return 100. * np.sum(norm_error) / norm_error.size
 
     def getCF(self, debug=False):
         '''
