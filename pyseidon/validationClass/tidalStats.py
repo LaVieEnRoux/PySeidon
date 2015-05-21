@@ -370,7 +370,13 @@ class TidalStats:
         stats['MDPO'] = self.getMDPO()
         stats['MDNO'] = self.getMDNO()
         stats['skill'] = self.getWillmott()
-	stats['phase'] = self.getPhase(debug=debug)
+        stats['CORR'] = self.getCORR()
+        stats['NRMSE'] = self.getNRMSE()
+        stats['NSE'] = self.getNSE()
+        stats['bias'] = self.getBias()
+        stats['SI'] = self.getSI()
+        stats['pbias'] = self.getPBIAS()
+        stats['phase'] = self.getPhase(debug=debug)
 
         if debug or self._debug: print "...getStats..."
 
