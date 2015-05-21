@@ -1,7 +1,7 @@
 #!/usr/bin/python2.7
 # encoding: utf-8
 import numpy as np
-from scipy.stats import t
+from scipy.stats import t, pearsonr
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 from scipy.interpolate import interp1d
@@ -145,6 +145,24 @@ class TidalStats:
         if debug or self._debug: print "...getPBIAS..."
         norm_error = self.error / self.observed
         return 100. * np.sum(norm_error) / norm_error.size
+
+    def getNSE(self, debug=False):
+        '''
+        Returns the Nash-Sutcliffe Efficiency coefficient of the model vs.
+        the observed data. Identifies if the model is better for
+        approximation than the mean of the observed data.
+        '''
+        SSE_mod = np.sum((self.observed - self.model)**2)
+        SSE_mean = np.sum((self.observed - np.mean(self.observed))**2)
+        return 1 - SSE_mod / SSE_mean
+
+    def getCORR(self, debug=False):
+        '''
+        Returns the Pearson correlation coefficient for the model vs.
+        the observed data, a number between -1 and 1. -1 implies perfect
+        negative correlation, 1 implies perfect correlation.
+        '''
+        return pearsonr(self.observed, self.model)[0]
 
     def getCF(self, debug=False):
         '''
