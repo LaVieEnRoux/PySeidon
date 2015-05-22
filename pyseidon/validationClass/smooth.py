@@ -25,12 +25,10 @@ def smooth(data_1, dt_1, data_2, dt_2, debug=False, debug_plot=False):
         times_2[i] = time.mktime(dt_2[i].timetuple())
     '''
 
-
     make_posix = lambda x: time.mktime(x.timetuple())
     times_1 = map(make_posix, dt_1)
     times_2 = map(make_posix, dt_2)
     time_1, times_2 = np.array(times_1), np.array(times_2)
-
 
     # choose smoothing interval
     start = max(times_1[0], times_2[0])
@@ -43,35 +41,18 @@ def smooth(data_1, dt_1, data_2, dt_2, debug=False, debug_plot=False):
     steps = int(length / step_sec)
 
     # sort times into bins
-    series_1, series_2 = np.zeros(steps), np.zeros(steps)
+    series_1, series_2 = np.zeros(steps - 1), np.zeros(steps - 1)
     time_bins = np.arange(steps) * step_sec + start
     inds_1 = np.digitize(times_1, time_bins)
     inds_2 = np.digitize(times_2, time_bins)
 
-    # run through the indices and take the mean of each bin
-    prev = 1
-    indices = []
-    for i, v in enumerate(inds_1):
-        if v == prev:
-            indices.append(i)
-        if v == steps:
-            break
-        else:
-            series_1[prev - 1] = np.nanmean(data_1[indices])
-            prev = v
-            indices = [i]
-
-    prev = 1
-    indices = []
-    for i, v in enumerate(inds_2):
-        if v == prev:
-            indices.append(i)
-        if v == steps + 1:
-            break
-        else:
-            series_1[prev - 1] = np.nanmean(data_1[indices])
-            prev = v
-            indices = [i]
+    # identify bin vertices and take means
+    first_hit_1 = np.searchsorted(inds_1, np.arange(1, steps + 1))
+    for j in xrange(steps - 1):
+        series_1[j] = np.nanmean(data_1[first_hit_1[j]:first_hit_1[j + 1]])
+    first_hit_2 = np.searchsorted(inds_2, np.arange(1, steps + 1))
+    for j in xrange(steps - 1):
+        series_2[j] = np.nanmean(data_2[first_hit_2[j]:first_hit_2[j + 1]])
 
     '''
     # take averages at each step, create output data
