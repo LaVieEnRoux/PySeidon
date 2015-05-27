@@ -40,7 +40,9 @@ rho = 10.25
 adcp_dirs = ['/EcoII/acadia_uni/workspace/observed/DG/ADCP/',
              '/EcoII/acadia_uni/workspace/observed/GP/ADCP/',
              '/EcoII/acadia_uni/workspace/observed/PP/ADCP/',
-             '/EcoII/acadia_uni/workspace/observed/BoF/ADCP/']
+             '/EcoII/acadia_uni/workspace/observed/BoF/ADCP/',
+             '/EcoII/force/force_acadia_project/work/measurements/' +
+             'ADCP/adcp_files']
 
 
 class Validation:
@@ -67,6 +69,7 @@ class Validation:
                  find_adcp=False):
         self._debug = debug
         self._debug_plot = debug_plot
+        self.History = []
         if debug: print '-Debug mode on-'
         if debug: print 'Loading...'
 
@@ -116,8 +119,8 @@ class Validation:
 
             if debug: print 'Detected ADCP: ' + max_adcp
 
-            self.History = ['ADCP matches %5.2f percent of the model' %
-                            ((adcp_lineup[max_ind] / mod_range) * 100.)]
+            self.History.append('ADCP matches %5.2f percent of the model' %
+                                ((adcp_lineup[max_ind] / mod_range) * 100.))
             observed = ADCP(max_adcp)
 
         # Metadata
