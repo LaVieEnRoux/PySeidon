@@ -57,8 +57,9 @@ Notes:
         #TR_comments: *_Raw and *_10minavg open with h5py whereas *_davgBS
         try:
             self.Data = sio.loadmat(filename,struct_as_record=False, squeeze_me=True)
-        except NotImplementedError:
-            self.Data = h5py.File(filename)
+        except (NotImplementedError, ValueError):
+            print filename
+            self.Data = h5py.File(filename, 'r')
         self.Variables = _load_adcp(self, debug=self._debug)
         self.Plots = PlotsAdcp(self.Variables, debug=self._debug)
         self.Utils = FunctionsAdcp(self.Variables,
