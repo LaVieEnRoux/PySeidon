@@ -382,7 +382,7 @@ class TidalStats:
         stats['NSE'] = self.getNSE()
         stats['bias'] = self.getBias()
         stats['SI'] = self.getSI()
-        stats['pbias']
+        stats['pbias'] = self.getPBIAS()
         stats['phase'] = self.getPhase(debug=debug)
 
         if debug or self._debug: print "...getStats..."
