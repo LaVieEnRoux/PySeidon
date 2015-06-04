@@ -85,6 +85,7 @@ class TidalStats:
         self.length = self.error.size
         self.type = type
 
+        '''
         if debug: print "...establish limits as defined by NOAA standard..."
         if (type == 'speed' or type == 'velocity'):
             self.ERROR_BOUND = 0.26
@@ -98,6 +99,12 @@ class TidalStats:
             self.ERROR_BOUND = 0.5 * rho**3 * 0.26**3
         else:
             self.ERROR_BOUND = 0.5
+        '''
+
+        # use 10% error instead of NOAA errors
+        obs_range = 0.1 * (np.max(self.observed) - np.min(self.observed))
+        mod_range = 0.1 * (np.max(self.model) - np.min(self.model))
+        self.ERROR_BOUND = (obs_range + mod_range) / 2.
 
         if debug: print "...TidalStats initialisation done."
 
@@ -375,7 +382,7 @@ class TidalStats:
         stats['NSE'] = self.getNSE()
         stats['bias'] = self.getBias()
         stats['SI'] = self.getSI()
-        stats['pbias'] = self.getPBIAS()
+        stats['pbias']
         stats['phase'] = self.getPhase(debug=debug)
 
         if debug or self._debug: print "...getStats..."
