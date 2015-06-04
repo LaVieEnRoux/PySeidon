@@ -41,8 +41,8 @@ adcp_dirs = ['/EcoII/acadia_uni/workspace/observed/DG/ADCP/',
              '/EcoII/acadia_uni/workspace/observed/GP/ADCP/',
              '/EcoII/acadia_uni/workspace/observed/PP/ADCP/',
              '/EcoII/acadia_uni/workspace/observed/BoF/ADCP/',
-             '/EcoII/force/force_acadia_project/work/measurements/' +
-             'ADCP/adcp_files']
+             '/EcoII/acadia_uni/projects/force/adcp_files/']
+
 
 
 class Validation:
@@ -92,13 +92,15 @@ class Validation:
             for i, adcp in enumerate(adcp_files):
                 # ignore non-processed/non-ADCP files
                 if 'raw' in adcp.lower() or 'station' in adcp.lower() \
-                        or '.mat' not in adcp or 'stn' in adcp.lower():
+                        or '.mat' not in adcp or 'stn' in adcp.lower() \
+                        or 'csv' in adcp.lower():
                     adcp_lineup[i] = 0
                     continue
-
                 try:
                     adcp = sio.loadmat(adcp)
                     times = adcp['time'][0][0][0][0]
+                    if times.size == 1:
+                        times = adcp['time'][0][0][0].flatten()
                 except NotImplementedError:
                     adcp = h5py.File(adcp, 'r')
                     times = np.rot90(adcp['time']['mtime'][:])[0]
@@ -116,6 +118,11 @@ class Validation:
             # find maximally lined up adcp file, add metadata
             max_ind = np.argmax(adcp_lineup)
             max_adcp = adcp_files[max_ind]
+
+            # exit if none lined up
+            if adcp_lineup[max_ind] <= 0:
+                print 'No ADCPs line up with this simulated data!'
+                sys.exit(1)
 
             if debug: print 'Detected ADCP: ' + max_adcp
 
