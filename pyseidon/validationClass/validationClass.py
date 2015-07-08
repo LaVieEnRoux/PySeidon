@@ -476,7 +476,7 @@ class Validation:
         RMSE = stats.getRMSE()
         return RMSE
     
-    def speedBias(self, debug=False):
+    def speedBias(self, bias_type='normal', debug=False):
         '''
         Calculates the unsigned speed bias quickly without having to
         calculate everything else.
@@ -506,7 +506,7 @@ class Validation:
                    debug=debug)
         stats = TidalStats(mod_sp_int, obs_sp_int, step_sp_int,
                            start_sp_int, type='speed', debug=debug)
-        bias = stats.getBias()
+        bias = stats.getBias(bias_type=bias_type)
         return bias
 
     def Save_as(self, filename, fileformat='pickle', debug=False):
