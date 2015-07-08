@@ -122,12 +122,22 @@ class TidalStats:
         if debug or self._debug: print "...getSD..."
         return np.sqrt(np.mean(abs(self.error - np.mean(self.error)**2)))
 
-    def getBias(self, debug=False):
+    def getBias(self, bias_type='normal', debug=False):
         '''
         Returns the bias of the model, a measure of over/under-estimation.
         '''
         if debug or self._debug: print "...getBias..."
-        return np.mean(self.error)
+        bias = 0
+        if bias_type not in ['normal', 'power']:
+            print 'Invalid bias type!'
+            return bias
+        if bias_type == 'normal':
+            bias =  np.mean(self.error)
+        elif bias_type == 'power':
+            mod_mean = np.mean(self.model**3)**(1./3.)
+            obs_mean = np.mean(self.observed**3)**(1./3.)
+            bias =  mod_mean - obs_mean
+        return bias
 
     def getSI(self, debug=False):
         '''
